@@ -2,23 +2,28 @@
   "short_name": "AirHorner",
   "name": "Kinlan's AirHorner of Infamy",
   "icons": [{
-      "src": "launcher-icon-1x.png",
+      "src": "assets/res/mipmap-mdpi/ic_launcher.png",
       "type": "image/png",
       "sizes": "48x48"
     },
     {
-      "src": "launcher-icon-2x.png",
+      "src": "assets/res/mipmap-xhdpi/ic_launcher.png",
       "type": "image/png",
       "sizes": "96x96"
     },
     {
-      "src": "launcher-icon-4x.png",
+      "src": "assets/res/mipmap-xxxhdpi/ic_launcher.png",
       "type": "image/png",
       "sizes": "192x192"
+    },
+    {
+      "src": "assets/web_hi_res_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "background_color": "#2196F3",
-  "theme_color": "#ed3ab5",
+  "theme_color": "#97ab76",
   "display": "standalone",
   "start_url": "."
 }
