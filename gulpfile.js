@@ -8,7 +8,7 @@ gulp.task('service-worker', () => {
   const swPath = `${outPath}/sw.js`;
 
   swPrecache.write(swPath, {
-    staticFileGlobs: ['dist/**/*.{js,html,css,png,jpg,gif}'],
+    staticFileGlobs: ['dist/**/*!(sw.js)'],
     stripPrefix: 'dist'
     // runtimeCaching: [{
     //   urlPattern: /^https:\/\/example\.com\/api/,
