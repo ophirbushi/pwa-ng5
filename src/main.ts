@@ -7,12 +7,6 @@ import { environment } from './environments/environment';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('./sw.js');
-
-  navigator.serviceWorker.onmessage = function (a) {
-    document.querySelector('h2').innerText = 'update required';
-    alert('update')
-  }
-
 }
 
 if (environment.production) {
