@@ -1,67 +1,55 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+  return new (P || (P = Promise))(function (resolve, reject) {
+      function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+      function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+      function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
 const appShellCacheName = 'shell-3';
-
-var urlsToCache = [
-  '/',
-];
 
 self.addEventListener('install', function (event) {
   // Perform install steps
-  event.waitUntil(
-    caches.open(appShellCacheName)
-    .then(function (cache) {
+  event.waitUntil(caches.open(appShellCacheName)
+      .then(function (cache) {
       console.log('Opened cache');
       return cache.addAll(urlsToCache);
-    })
-  );
+  }));
 });
-
 self.addEventListener('activate', function (event) {
-  event.waitUntil(
-    caches.keys().then(function (cacheNames) {
-      return Promise.all(
-        cacheNames
-        .filter(cacheName => cacheName !== appShellCacheName)
-        .map(function (cacheName) {
+  event.waitUntil(caches.keys().then(function (cacheNames) {
+      return Promise.all(cacheNames
+          .filter(cacheName => cacheName !== appShellCacheName)
+          .map(function (cacheName) {
           return caches.delete(cacheName);
-        })
-      );
-    })
-  );
+      }));
+  }));
 });
-
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.open(appShellCacheName).then((cache) => {
-      return cache.match(event.request).then((response) => {
-        let responseTextPromise = response && typeof response.text === 'function' && typeof response.clone === 'function' ?
-          response.clone().text() : Promise.resolve(null);
-
-
-        var fetchPromise = fetch(event.request).then((networkResponse) => {
-          if (event.request.url.indexOf('chrome-extension') !== 0) {
-            cache.put(event.request, networkResponse.clone());
-
-            const networkResponseTextPromise = networkResponse && typeof networkResponse.text === 'function' && typeof networkResponse.clone === 'function' ?
-              networkResponse.clone().text() : Promise.resolve(null);
-
-            networkResponseTextPromise.then(nt => {
-              responseTextPromise.then((t) => {
-                if (t != nt) {
-                  self.clients.matchAll().then(all => all.map(client => {
-                    setTimeout(() => {
-                      client.postMessage('update');
-                    }, 3000)
-                  }));
-                }
-              });
-            })
-
-          }
-
+  if (event.request.url.indexOf('chrome-extension') === 0)
+      return event.respondWith(null);
+  const eventResponse = caches.open(appShellCacheName)
+      .then((cache) => __awaiter(this, void 0, void 0, function* () {
+      const cacheResponse = yield cache.match(event.request);
+      const fetchPromise = fetch(event.request)
+          .then((networkResponse) => {
+          cache.put(event.request, networkResponse.clone());
+          compareResponses(cacheResponse.clone(), networkResponse.clone());
           return networkResponse;
-        })
-        return response || fetchPromise;
-      })
-    })
-  );
+      });
+      return cacheResponse ? cacheResponse.clone() : fetchPromise;
+  }));
+  event.respondWith(eventResponse);
 });
+function compareResponses(cacheResponse, networkResponse) {
+  return __awaiter(this, void 0, void 0, function* () {
+      if (!cacheResponse || cacheResponse.status / 100 >= 4 || !networkResponse || networkResponse.status / 100 >= 4)
+          return;
+      const cacheResponseText = yield cacheResponse.text();
+      const networkResponseText = yield networkResponse.text();
+      if (cacheResponseText !== networkResponseText) {
+          const clients = yield self.clients.matchAll();
+          clients.forEach(client => setTimeout(() => client.postMessage('update'), 3000));
+      }
+  });
+}

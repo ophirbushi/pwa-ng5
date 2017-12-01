@@ -5,12 +5,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build && npm run gulp:sw",
-    "build:prod": "ng build --aot -e prod -t production && npm run gulp:sw",
+    "build": "ng build && npm run gulp",
+    "build:prod": "ng build --aot -e prod -t production && npm run gulp",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gulp:sw": "gulp service-worker"
+    "gulp": "gulp"
   },
   "private": true,
   "dependencies": {
@@ -38,6 +38,10 @@
     "@types/node": "~6.0.60",
     "codelyzer": "^4.0.1",
     "gulp": "^3.9.1",
+    "gulp-concat-filenames": "^1.2.0",
+    "gulp-foreach": "^0.1.0",
+    "gulp-insert": "^0.5.0",
+    "gulp-replace": "^0.6.1",
     "jasmine-core": "~2.6.2",
     "jasmine-spec-reporter": "~4.1.0",
     "karma": "~1.7.0",
